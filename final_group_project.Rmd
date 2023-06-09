@@ -199,13 +199,23 @@ card_fraud <- card_fraud %>%
 
 ### Why do we care about the number of categories and whether they are "excessive"?
 
-Consider the extreme case where a dataset had categories that only contained one record each. There is simply insufficient data to make correct predictions using category as a predictor on new data with that category label. Additionally, if your modeling uses dummy variables, having an extremely large number of categories will lead to the production of a huge number of predictors, which can slow down the fitting. This is fine if all the predictors are useful, but if they aren't useful (as in the case of having only one record for a category), trimming them will improve the speed and quality of the data fitting.
+In some cases, we may encounter a dataset where certain categories contain only one record each. This situation poses a challenge because having such limited data makes it difficult to make accurate predictions using those categories as predictors for new data with the same labels. Additionally, if our modeling process involves generating dummy variables, a large number of categories can lead to an overwhelming number of predictors. This abundance of predictors can slow down the model fitting process. While it's acceptable if all the predictors are useful, it becomes problematic when we have categories with only one record since those predictors are not informative. Trimming them can significantly improve the speed and quality of the data fitting process.
 
-If I had subject matter expertise, I could manually combine categories. If you don't have subject matter expertise, or if performing this task would be too labor intensive, then you can use cutoffs based on the amount of data in a category. If the majority of the data exists in only a few categories, then it might be reasonable to keep those categories and lump everything else in an "other" category or perhaps even drop the data points in smaller categories.
+If we possess subject matter expertise, we can manually combine categories based on our knowledge. This allows us to merge related categories and create a more meaningful representation of the data. However, if we lack the necessary expertise or performing manual category combination is time-consuming, we can use cutoffs based on the amount of data within each category as an alternative approach.
+
+By setting cutoffs, we can determine if a category has enough data to be considered meaningful. If the majority of the data is concentrated in only a few categories, it may be reasonable for us to retain those categories and group the remaining ones into an "other" category. Another option could be to exclude the data points belonging to smaller categories altogether.
+
+This strategy of using cutoffs and consolidating categories allows us to simplify the dataset and make the modeling process more efficient. By doing so, we improve our ability to derive meaningful insights from the data while maintaining the overall integrity of the analysis.
 
 ## Do all variables have sensible types?
 
-Consider each variable and decide whether to keep, transform, or drop it. This is a mixture of Exploratory Data Analysis and Feature Engineering, but it's helpful to do some simple feature engineering as you explore the data. In this project, we have all data to begin with, so any transformations will be performed on the entire dataset. Ideally, do the transformations as a `recipe_step()` in the tidymodels framework. Then the transformations would be applied to any data the recipe was used on as part of the modeling workflow. There is less chance of data leakage or missing a step when you perform the feature engineering in the recipe.
+In this project, we need to carefully consider each variable and decide what to do with it: should we keep it as is, transform it in some way, or drop it altogether? This process involves a mix of Exploratory Data Analysis and Feature Engineering. While exploring the data, it's often helpful to perform some simple feature engineering techniques to enhance our understanding and extract valuable insights.
+
+Now, in this particular project, we have the luxury of having all the data available right from the beginning. This means that any transformations we apply can be performed on the entire dataset. It's worth noting that it's ideal to carry out these transformations using a recipe_step() within the tidymodels framework.
+
+By encapsulating the transformations within a recipe_step(), we ensure that the same transformations are consistently applied to any new data that the recipe is used on as part of the modeling workflow. This approach helps prevent data leakage and reduces the chances of missing any crucial steps during the feature engineering process.
+
+So, to summarize, the key idea is to carefully assess each variable, determine whether it needs to be kept, transformed, or dropped, and then perform the transformations using a recipe_step() within the tidymodels framework. This way, we maintain consistency, minimize the risk of data leakage, and ensure that the feature engineering process is properly executed throughout the modeling workflow.
 
 ## Which variables to keep in your model?
 
