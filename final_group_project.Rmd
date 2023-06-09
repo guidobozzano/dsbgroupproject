@@ -185,7 +185,12 @@ Consider each variable and decide whether to keep, transform, or drop it. This i
 
 You have a number of variables and you have to decide which ones to use in your model. For instance, you have the latitude/lognitude of the customer, that of the merchant, the same data in radians, as well as the `distance_km` and `distance_miles`. Do you need them all?
 
-Based on the EDA Analysis, we believe we do not need every variable for the model
+Based on the EDA Analysis, we believe we do not need every variable for the model. Having said that we have decided to use these first set of variables to explore a fraud prediction model.
+Time variables such as hour, wday and month_name because we analyzed that fraud tends to happen late and night, during the first half of the year and approximately every day of the week.
+Another variable would be age because based on the EDA analysis we realized that younger people was more affected by fraud than older people. This could be due by multiple reasons such as lack of credit card use for older people, or easier to fall for fraud as a young person, etc.
+Also, since we have multiple distance variables in the dataset we decided to focus on 1 only because using several variables that essentially do the same in the model does not make sense. Therefore, we plan to use distance_km for distance.
+Furthermore, we decided to exclude the job variable because of the high unique values (494) and because we believe it does not necessarily explain whether a transaction is fraud. On the other hand, we've decided to include the category variable since based on the EDA we did for homework2 we saw that there are multiple categories that are fraud more frequent than others (e.g: online vs offline)
+Last, we included the amount of the fraud since the amount usually tends to be small based on the EDA and the is_fraud variable that will be our prediction
 
 ## Fit your workflows in smaller sample
 
@@ -243,7 +248,7 @@ What steps are you going to add to your recipe? Do you need to do any log transf
 ```{r, define_recipe}
 
 fraud_rec <- recipe(is_fraud ~ ., data = card_fraud_train) %>%
-  step_log(amt) %>% 
+  step_log(amt) %>% #We are transforming the amount variable because it's highly skewed to the lower amounts. Therefore applying a log transformation makes the amt variable normal
   step_novel(all_nominal(), -all_outcomes()) %>% # Use *before* `step_dummy()` so new level is dummified
   step_dummy(all_nominal(), -all_outcomes())
 
@@ -439,7 +444,7 @@ knn_time <- time[[4]]
 
 knn_res %>% collect_metrics(summarize = TRUE)
 
-
+#The KNN model takes the longer to run with 178.247 seconds whereas the XGBoost takes the shortest amount of time with 2.307 seconds
 
 ```
 
@@ -511,6 +516,8 @@ model_comp %>%
   theme(legend.position = "none")+
   labs(y = NULL)
 
+#Based on the model comparison we can conclude that the XGBoost has the greatest level of accuracy with 98%, followed by the Random Forest with 0.97
+
 ```
 
 ## Which metric to use
@@ -550,7 +557,7 @@ last_fit_xgb %>%
   vip(num_features = 10) +
   theme_light()
 
-
+#From this chart we can observe that the amount variable has the greatest level of importance with 50%, followed by the category_grocery_pos with 20% and hour with 12.5%. Last, age with 0.9%
 ```
 
 ## Plot Final Confusion matrix and ROC curve
@@ -618,6 +625,8 @@ cost_summary <- cost %>%
             ~ sum(.x, na.rm = TRUE)))
 
 cost_summary
+
+#In terms of money we can see that the False Negatives are costing the company around 488k (1.03%) vs the false_naives that cost around 2M (4.3%). Therefore with our model we are saving more than 1.5M in fraud refunds.
 
 ```
 
