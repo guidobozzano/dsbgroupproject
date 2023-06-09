@@ -1,8 +1,12 @@
 ---
 title: "Final Group project"
-author: "GUIDO BOZZANO"
+author: "GUIDO BOZZANO, IGNACIO GAING AND JUAN ARANGUREN"
 date: "`r Sys.Date()`"
 output:
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
   html_document:
     theme: flatly
     highlight: zenburn
@@ -10,8 +14,6 @@ output:
     toc: yes
     toc_float: yes
     code_folding: show
-  pdf_document:
-    toc: yes
 ---
 
 ```{r}
